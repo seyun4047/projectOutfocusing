@@ -1,4 +1,4 @@
-# projectOutfocusing
+<img width="1734" alt="스크린샷 2023-11-02 22 20 51" src="https://github.com/seyun4047/projectOutfocusing/assets/73819780/bdbafe3d-e4c9-4587-9571-4d5302c33c33"># projectOutfocusing
 
 나의 취미는 사진 촬영이다.
 
@@ -24,5 +24,18 @@ https://namu.wiki/w/아웃포커싱
 
 --------------------------------------------------------
 
+아웃포커싱 예시
+![image](https://github.com/seyun4047/projectOutfocusing/assets/73819780/a8c5d252-7d2d-4817-9b6e-936273cbe077)
+
+--------------------------------------------------------
 CHAPTER 1
 OpenCV를 이용한 간단 제작
+
+구현 방법 :
+
+1. 피사체-관심영역 설정
+-> 바이너리화 후 배경과 피사체 분리
+2. 배경 다운스케일
+3. 구분된 영역 정리(sanding)
+
+CHAPTER 1. OpenCV를 이용한 간단 제작
