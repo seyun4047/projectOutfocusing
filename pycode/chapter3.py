@@ -1,57 +1,87 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
+
 isDragging = False
-x0, y0, w, h = -1,-1,-1,-1
-blue, red = (255,0,0),(0,0,255)
+
+# 창 설정
+def win_con():
+    cv2.imshow('img',img)
+    cv2.imshow('img_fixed',img)
+    cv2.imshow('mask_img', mask_img)
+
+    cv2.namedWindow('img', cv2.WINDOW_NORMAL)
+    cv2.namedWindow('img_fixed', cv2.WINDOW_NORMAL)
+    cv2.namedWindow('mask_img', cv2.WINDOW_NORMAL)
+
+    cv2.resizeWindow('img', 500, 500)
+    cv2.resizeWindow('img_fixed', 500, 500)
+    cv2.resizeWindow('mask_img', 500, 500)
+
+    cv2.moveWindow('img', 0, 0)
+    cv2.moveWindow('img_fixed', 500, 0)
+    cv2.moveWindow('mask_img', 1000, 0)
+
+
 def onMouse(event, x, y, flags, param):
-    global isDragging, x0, y0, img
+    global isDragging, x0, y0, img, userOFCSb
     if event == cv2.EVENT_LBUTTONDOWN:
         isDragging = True
-        x0 = x
-        y0 = y
+        cv2.circle(img, (x, y), penSize, (255, 0, 0), -1)
+        cv2.imshow('img', img)
     elif event == cv2.EVENT_MOUSEMOVE:
         if isDragging:
-            img_draw = img.copy()
-            cv2.rectangle(img_draw, (x0, y0), (x, y), blue, 2)
-            cv2.imshow('img', img_draw)
+            #draw mask
+            cv2.circle(img, (x, y), penSize, (255, 0, 0), -1)
+            cv2.circle(mask_img, (x,y), penSize, (255,255,255), -1)
+            cv2.imshow('img',img)
+            cv2.imshow('mask_img', mask_img)
+
+
     elif event == cv2.EVENT_LBUTTONUP:
         if isDragging:
             isDragging = False
+        if userOFCSb > 0 : outfocusing()
 
-            # roi 선택
-            w = x - x0
-            h = y - y0
-            print("x:%d, y:%d, w:%d, h:%d" % (x0, y0, w, h))
-            if w > 0 and h > 0:
+#TrackBar
+def onChange(x):
+    global userOFCSb
+    global penSize
+    userOFCSb = cv2.getTrackbarPos('OFCS','img')
+    penSize = cv2.getTrackbarPos('PenSize', 'img')
+    if userOFCSb > 0 : outfocusing()
 
-                # height, width = img.shape[:2]
-                # # img = cv2.resize(img, (int(width), int(height)), interpolation=cv2.INTER_AREA)
-                # 전경
-                # img_fg = img[y0:y0 + h, x0:x0 + w]
-                #
-                # # resize를 통한 블러링
-                # # img_cp = cv2.resize(img, (int(width*userOFCS), int(height*userOFCS)), interpolation=cv2.INTER_AREA)
-                # # img_cp = cv2.resize(img_cp, (int(width), int(height)), interpolation=cv2.INTER_AREA)
-                # # img_cp[y0:y0 + h, x0:x0 + w] = img_fg
-                #
-                # #blur() 함수로 블러링
-                # img_af = cv2.blur(img,(userOFCSb,userOFCSb))
-                # img_af[y0:y0 + h, x0:x0 + w] = img_fg
-                #
-                # 수정된 이미지 show
-                # cv2.imwrite('./img/fixed.jpg', img_af)
-                # cv2.imshow('img_cp',img_af)
-                # print("fixed")
 
-            else:
-                cv2.imshow('img', img)
-                print("error")
-img = cv2.imread('img/testImg.jpg')
-cv2.imshow('img', img)
-# userOFCS = int(input())
-userOFCS = 0.2
-userOFCSb = 10
+def outfocusing():
+    # blured
+    blued_img = cv2.blur(ori_img, (userOFCSb, userOFCSb))
+    # masked img
+    mask_img_inv = cv2.bitwise_not(mask_img)
+    # Blured img에서 마스킹된 부분 제외하기
+    masked_fg = cv2.bitwise_and(ori_img, mask_img)
+    # 마스킹된 img에서 배경 제외하기
+    masked_bg = cv2.bitwise_and(blued_img, mask_img_inv)
+    # 위 두 이미지 합치기
+    img_fixed = masked_fg + masked_bg
+
+    # 수정된 이미지 show
+    cv2.imshow('img_fixed', img_fixed)
+
+ori_img = cv2.imread('img/testImg.jpg')
+img=ori_img.copy()
+img_fixed=img.copy()
+mask_img = np.zeros_like(img)
+
+win_con()
+
+userOFCSb = 0 # 아웃포커싱 정도 조절
+penSize = 0 # 펜사이즈 조절
+win_controller = "Controller"
 cv2.setMouseCallback('img', onMouse)
+cv2.createTrackbar('OFCS', 'img',0,100, onChange)
+cv2.createTrackbar('PenSize', 'img',0,100, onChange)
+
+
+
+
 cv2.waitKey()
 cv2.destroyAllWindows()

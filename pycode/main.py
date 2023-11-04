@@ -34,34 +34,26 @@ def onMouse(event, x, y, flags, param):
             print("x:%d, y:%d, w:%d, h:%d" % (x0, y0, w, h))
             if w > 0 and h > 0:
 
-                # height, width = img.shape[:2]
-                # # img = cv2.resize(img, (int(width), int(height)), interpolation=cv2.INTER_AREA)
+                height, width = img.shape[:2]
+                # img = cv2.resize(img, (int(width), int(height)), interpolation=cv2.INTER_AREA)
                 # 전경
-                # img_fg = img[y0:y0 + h, x0:x0 + w]
-                #
-                # # resize를 통한 블러링
-                # # img_cp = cv2.resize(img, (int(width*userOFCS), int(height*userOFCS)), interpolation=cv2.INTER_AREA)
-                # # img_cp = cv2.resize(img_cp, (int(width), int(height)), interpolation=cv2.INTER_AREA)
-                # # img_cp[y0:y0 + h, x0:x0 + w] = img_fg
-                #
-                # #blur() 함수로 블러링
-                # img_af = cv2.blur(img,(userOFCSb,userOFCSb))
-                # img_af[y0:y0 + h, x0:x0 + w] = img_fg
-                #
-                # 수정된 이미지 show
-                # cv2.imwrite('./img/fixed.jpg', img_af)
-                # cv2.imshow('img_cp',img_af)
-                # print("fixed")
+                img_fg = img[y0:y0 + h, x0:x0 + w]
 
-            # stereo vision 알고리즘을 통한 심도 탐색
-                img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                img_depth = img_gray[y0:y0 + h, x0:x0 + w]
-                # img_depth2 = cv2.blur(img_depth,(5,5))
-                img_depth2 = cv2.GaussianBlur(img_depth, (15,15), 0) #가우시안 필터링
-                stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
-                disparity = stereo.compute(img_depth, img_depth2)
-                plt.imshow(disparity, 'gray')
-                plt.show()
+                # resize를 통한 블러링
+                # img_cp = cv2.resize(img, (int(width*userOFCS), int(height*userOFCS)), interpolation=cv2.INTER_AREA)
+                # img_cp = cv2.resize(img_cp, (int(width), int(height)), interpolation=cv2.INTER_AREA)
+                # img_cp[y0:y0 + h, x0:x0 + w] = img_fg
+
+                #blur() 함수로 블러링
+                img_af = cv2.blur(img,(userOFCSb,userOFCSb))
+                img_af[y0:y0 + h, x0:x0 + w] = img_fg
+
+                # 수정된 이미지 show
+                cv2.imwrite('./img/fixed.jpg', img_af)
+                cv2.imshow('img_cp',img_af)
+                print("fixed")
+
+
 
             else:
                 cv2.imshow('img', img)
