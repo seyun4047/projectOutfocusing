@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 isDragging = False
+isRDragging = False
 
 # 창 설정
 def win_con():
@@ -23,11 +24,18 @@ def win_con():
 
 
 def onMouse(event, x, y, flags, param):
-    global isDragging, x0, y0, img, userOFCSb
+    global isDragging, isRDragging, x0, y0, img, userOFCSb
+    if event == cv2.EVENT_RBUTTONDOWN:
+        isRDragging = True
+        eraseDot()
+        cv2.circle(mask_img, (x, y), penSize, (0, 0, 0), -1)
+        cv2.imshow('img', img)
     if event == cv2.EVENT_LBUTTONDOWN:
         isDragging = True
         cv2.circle(img, (x, y), penSize, (255, 0, 0), -1)
+        cv2.circle(mask_img, (x, y), penSize, (255, 255, 255), -1)
         cv2.imshow('img', img)
+
     elif event == cv2.EVENT_MOUSEMOVE:
         if isDragging:
             #draw mask
@@ -35,12 +43,23 @@ def onMouse(event, x, y, flags, param):
             cv2.circle(mask_img, (x,y), penSize, (255,255,255), -1)
             cv2.imshow('img',img)
             cv2.imshow('mask_img', mask_img)
-
+        elif isRDragging:
+            #draw mask
+            cv2.circle(mask_img, (x, y), penSize, (0, 0, 0), -1)
+            eraseDot()
+            cv2.imshow('img',img)
+            cv2.imshow('mask_img', mask_img)
 
     elif event == cv2.EVENT_LBUTTONUP:
         if isDragging:
             isDragging = False
-        if userOFCSb > 0 : outfocusing()
+
+    elif event == cv2.EVENT_RBUTTONUP:
+        if isRDragging:
+            isRDragging = False
+            eraseDot()
+
+    if userOFCSb > 0: outfocusing()
 
 #TrackBar
 def onChange(x):
@@ -66,8 +85,22 @@ def outfocusing():
     # 수정된 이미지 show
     cv2.imshow('img_fixed', img_fixed)
 
+def eraseDot():
+    global img
+    # masked img
+    mask_img_inv = cv2.bitwise_not(mask_img)
+    # Blured img에서 마스킹된 부분 제외하기
+    masked_fg = cv2.bitwise_and(img, mask_img)
+    # 마스킹된 img에서 배경 제외하기
+    masked_bg = cv2.bitwise_and(ori_img, mask_img_inv)
+    # 위 두 이미지 합치기
+    img = masked_fg + masked_bg
+
+    # 수정된 이미지 show
+    cv2.imshow('img', img)
+
 ori_img = cv2.imread('img/testImg.jpg')
-img=ori_img.copy()
+img = ori_img.copy()
 img_fixed=img.copy()
 mask_img = np.zeros_like(img)
 
