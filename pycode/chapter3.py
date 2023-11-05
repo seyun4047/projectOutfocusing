@@ -41,14 +41,18 @@ def onMouse(event, x, y, flags, param):
             #draw mask
             cv2.circle(img, (x, y), penSize, (255, 0, 0), -1)
             cv2.circle(mask_img, (x,y), penSize, (255,255,255), -1)
-            cv2.imshow('img',img)
+            drawMotion(x,y)
             cv2.imshow('mask_img', mask_img)
         elif isRDragging:
             #draw mask
             cv2.circle(mask_img, (x, y), penSize, (0, 0, 0), -1)
             eraseDot()
-            cv2.imshow('img',img)
+            drawMotion(x,y)
             cv2.imshow('mask_img', mask_img)
+        else:
+            drawMotion(x,y)
+
+
 
     elif event == cv2.EVENT_LBUTTONUP:
         if isDragging:
@@ -60,6 +64,12 @@ def onMouse(event, x, y, flags, param):
             eraseDot()
 
     if userOFCSb > 0: outfocusing()
+
+def drawMotion(x,y):
+    pre = img.copy()
+    cv2.imshow('img', img)
+    cv2.circle(pre, (x, y), penSize, (0, 255, 0))
+    cv2.imshow('img', pre)
 
 #TrackBar
 def onChange(x):
