@@ -29,14 +29,14 @@ def win_con():
 #fill 함수구현 bfs
 def fillRoi(x,y,dh,dw):
     visited = [[0]*dh for _ in range(dw)]
-    print(visited)
+    # print(visited)
     dir = [[-1, 0], [1, 0], [0, -1], [0, 1]]
     q = deque()
     q.append([x, y])
     visited[x][y] = 1
     while q:
         cx, cy = q.popleft()
-        print(cx, cy)
+        # print(cx, cy)
         for dx,dy in dir:
             nx=cx+dx
             ny=cy+dy
@@ -44,6 +44,7 @@ def fillRoi(x,y,dh,dw):
                 # print(nx,ny)
                 q.append([nx,ny])
                 mask_img[ny][nx]=[255,255,255]
+                img[ny][nx]=[255,0,0]
                 visited[nx][ny] = 1
 
 def onMouse(event, x, y, flags, param):
