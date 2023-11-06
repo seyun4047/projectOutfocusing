@@ -64,10 +64,14 @@ OpenCV를 이용한 간단 제작
 fill ver1 매커니즘 구현
 
 toggle Btn :
-'q' = quit
-'f' = fill on
-'g' = fill off
+'q' = quit,
+
+'f' = fill on,
+
+'g' = fill off,
+
 -> 추후 threshold 함수와 연계하여 피사체 자동 분석가능하도록 연계예정
+
 -> 한계 : ty(topY), dy(downY) 탐색 알고리즘의 부정확성으로 인한 fill 끊김 발생
 
 --------------------------------------------------------
