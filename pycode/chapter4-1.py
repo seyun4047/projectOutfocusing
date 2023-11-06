@@ -28,7 +28,7 @@ def win_con():
 
 #fill 함수구현 bfs
 def fillRoi(x,y,dh,dw):
-    visited = [[0]*dh for _ in range(dw)]
+    visited = [[0]*(dw+1) for _ in range(dh+1)]
     # print(visited)
     dir = [[-1, 0], [1, 0], [0, -1], [0, 1]]
     q = deque()
@@ -40,7 +40,7 @@ def fillRoi(x,y,dh,dw):
         for dx,dy in dir:
             nx=cx+dx
             ny=cy+dy
-            if 0<=nx<=w-1 and 0<=ny<=h-1 and visited[nx][ny]==0 and mask_img[ny][nx][0]!=255:
+            if 1<=nx<=w-1 and 1<=ny<=h-1 and visited[nx][ny]==0 and mask_img[ny][nx][0]!=255:
                 # print(nx,ny)
                 q.append([nx,ny])
                 mask_img[ny][nx]=[255,255,255]
@@ -124,6 +124,7 @@ def outfocusing():
 
     # 수정된 이미지 show
     cv2.imshow('img_fixed', img_fixed)
+    cv2.imwrite('img/testSaved.jpg', img_fixed)
 
 def eraseDot():
     global img
@@ -139,7 +140,10 @@ def eraseDot():
     # 수정된 이미지 show
     cv2.imshow('img', img)
 
-ori_img = cv2.imread('img/testImg.jpg')
+# ori_img = cv2.imread('img/testImg.jpg')
+# ori_img = cv2.imread('img/test2.JPG')
+ori_img = cv2.imread('img/test3.JPG')
+
 img = ori_img.copy()
 img_fixed=img.copy()
 mask_img = np.zeros_like(img)
@@ -161,3 +165,5 @@ while True:
         fillTog = True
     elif key == ord('g'):
         fillTog = False
+    # elif key == ord('s'):
+    #     cv2.imwrite('img/testSaved.jpg',img_fixed)
