@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from collections import deque
 
 isDragging = False
 isRDragging = False
@@ -25,37 +26,25 @@ def win_con():
     cv2.moveWindow('mask_img', 1000, 0)
     h, w, _ = img.shape
 
-#fill 함수구현
+#fill 함수구현 bfs
 def fillRoi(x,y,dh,dw):
-    lx, rx, ty, dy = -1, -1, -1, -1
-    print(x,y)
-    i = 0
-    for i in range(y,0,-1):
-        if mask_img[i][x][0]==255:
-            ty=i
-            break
-    # if i<=1:
-    #     ty=0
-    # j=dh
-    print("ty:"+str(ty))
-    for j in range(y,dh):
-        # print(j)
-        if mask_img[j][x][0]==255:
-            dy=j
-            break
-    # if j==dh-1:
-    #     dy=dh
-    print("dy:"+str(dy))
-
-    for cy in range(ty,dy,1):
-        for lx in range(x,0,-1):
-            if mask_img[cy][lx][0] == 255:
-                break
-        for rx in range(x,dw,1):
-            if mask_img[cy][rx][0] == 255:
-                break
-        mask_img[cy,lx:rx]=[255,255,255]
-        img[cy, lx:rx] = [255, 0, 0]
+    visited = [[0]*dh for _ in range(dw)]
+    print(visited)
+    dir = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+    q = deque()
+    q.append([x, y])
+    visited[x][y] = 1
+    while q:
+        cx, cy = q.popleft()
+        print(cx, cy)
+        for dx,dy in dir:
+            nx=cx+dx
+            ny=cy+dy
+            if 0<=nx<=w-1 and 0<=ny<=h-1 and visited[nx][ny]==0 and mask_img[ny][nx][0]!=255:
+                # print(nx,ny)
+                q.append([nx,ny])
+                mask_img[ny][nx]=[255,255,255]
+                visited[nx][ny] = 1
 
 def onMouse(event, x, y, flags, param):
     global isDragging, isRDragging, x0, y0, img, userOFCSb
