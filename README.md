@@ -91,3 +91,18 @@ fill ver2 매커니즘 구현
 -> Chapter 4의 fill 끊김 현상을 BFS 알고리즘을 통해 극복
 
 -> 한계 : 너무 느림
+
+--------------------------------------------------------
+**CHAPTER 5**
+-------------
+
+contour fill ver1 매커니즘 구현
+
+toggle Btn :
+'c' = contour fill on,
+
+'v' = contour fill off,
+
+-> 추후 threshold 강화된 알고리즘이용으로 정확도를 높일 예정
+-> 한계 : threshold 홀드를 통한 경계 지정 및 drawContour 함수의 펜크기를 지정하면 마스크 될 때, 그 펜크기-1만큼의 공백이 생기는데
+      추후 kenel을 이용해 매꿀예정
